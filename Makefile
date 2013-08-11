@@ -2,7 +2,7 @@
 # define compiler and compiler flag variables
 #
 
-JFLAGS = -g
+JFLAGS = -g -cp .:stdlib:stdlib.jar
 JC = javac
 
 
@@ -39,8 +39,10 @@ JC = javac
 
 CLASSES = \
 	HelloWorld.java \
-	Computer.java   \
+	SameDir.java    \
+	computer_package/Computer.java   \
 	UseArgument.java
+
 
 #
 # the default make target entry

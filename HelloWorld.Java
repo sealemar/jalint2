@@ -22,7 +22,13 @@ public class HelloWorld {
 
     public static void main(String[] args) {
         Computer computer = new Computer();
+        SameDir  samedir  = new SameDir();
         System.out.println("Hello, World");
+
+        System.out.println("Type a string: ");
+        String s = StdIn.readString();
+        System.out.println("Your string was: " + s);
+        System.out.println();
     }
 
 }
