@@ -38,8 +38,8 @@ JC = javac
 #
 
 CLASSES = \
-	HelloWorld.java
-
+	HelloWorld.java \
+	UseArgument.java
 
 #
 # the default make target entry
