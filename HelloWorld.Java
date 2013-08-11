@@ -16,9 +16,12 @@
  *
  *************************************************************************/
 
+import computer_package.Computer;
+
 public class HelloWorld {
 
     public static void main(String[] args) {
+        Computer computer = new Computer();
         System.out.println("Hello, World");
     }
 

@@ -39,6 +39,7 @@ JC = javac
 
 CLASSES = \
 	HelloWorld.java \
+	Computer.java   \
 	UseArgument.java
 
 #
