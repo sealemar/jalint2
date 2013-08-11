@@ -7,21 +7,19 @@ JC = javac
 
 
 #
-# Clear any default targets for building .class files from .java files; we 
-# will provide our own target entry to do this in this makefile.
-# make has a set of default targets for different suffixes (like .c.o) 
-# Currently, clearing the default for .java.class is not necessary since 
-# make does not have a definition for this target, but later versions of 
-# make may, so it doesn't hurt to make sure that we clear any default 
-# definitions for these
+# Clear default targets for building .class files from .java files. We
+# provide our own target entry for this here. Make has default targets
+# for different suffixes (like .c.o). Currently, make does not have a
+# definition for this target, but later versions of make may. Good
+# practice to clear default definitions.
 #
 
 .SUFFIXES: .java .class
 
 
 #
-# Here is our target entry for creating .class files from .java files 
-# This is a target entry that uses the suffix rule syntax:
+# Here is our target entry for creating .class files from .java files.
+# This entry uses the suffix-rule syntax:
 #	DSTS:
 #		rule
 #  'TS' is the suffix of the target file, 'DS' is the suffix of the dependency 
@@ -31,18 +29,16 @@ JC = javac
 #
 
 .java.class:
-        $(JC) $(JFLAGS) $*.java
+	$(JC) $(JFLAGS) $*.java
 
 
 #
-# CLASSES is a macro consisting of 4 words (one for each java source file)
+# CLASSES is a macro consisting of one \-terminated line for each java
+# source file)
 #
 
 CLASSES = \
-        Foo.java \
-        Blah.java \
-        Library.java \
-        Main.java 
+	HelloWorld.java
 
 
 #
@@ -55,7 +51,7 @@ default: classes
 #
 # This target entry uses Suffix Replacement within a macro: 
 # $(name:string1=string2)
-# 	In the words in the macro named 'name' replace 'string1' with 'string2'
+# 	In the words in the macro named 'name', replace 'string1' with 'string2'
 # Below we are replacing the suffix .java of all words in the macro CLASSES 
 # with the .class suffix
 #
@@ -68,4 +64,4 @@ classes: $(CLASSES:.java=.class)
 #
 
 clean:
-        $(RM) *.class
+	$(RM) *.class
