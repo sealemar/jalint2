@@ -2,8 +2,9 @@
 # define compiler and compiler flag variables
 #
 
-JFLAGS = -g -cp "./:./com/sun/jna/*:./stdlib/*"
-JC = javac
+CP     = "./:./com/sun/jna/*:./stdlib/*"
+JFLAGS = -g -cp $(CP)
+JC     = javac
 
 
 #
@@ -38,8 +39,8 @@ JC = javac
 #
 
 CLASSES = \
-	HelloWorld.java \
-	SameDir.java    \
+	HelloWorld.java                  \
+	SameDir.java                     \
 	computer_package/Computer.java   \
 	UseArgument.java
 
@@ -48,7 +49,10 @@ CLASSES = \
 # the default make target entry
 #
 
-default: classes
+run: classes
+	java -cp $(CP) HelloWorld
+
+default: run
 
 
 #
@@ -68,3 +72,4 @@ classes: $(CLASSES:.java=.class)
 
 clean:
 	$(RM) *.class
+
