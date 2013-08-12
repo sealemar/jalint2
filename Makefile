@@ -2,7 +2,7 @@
 # define compiler and compiler flag variables
 #
 
-JFLAGS = -g -cp .:stdlib:stdlib.jar
+JFLAGS = -g -cp "./:./com/sun/jna/*:./stdlib/*"
 JC = javac
 
 

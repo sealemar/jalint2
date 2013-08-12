@@ -16,6 +16,7 @@
  *
  *************************************************************************/
 
+import com.sun.jna.Library;
 import computer_package.Computer;
 
 public class HelloWorld {

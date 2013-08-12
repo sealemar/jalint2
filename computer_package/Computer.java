@@ -9,6 +9,5 @@ public class Computer {
     public void computer_method() {
         System.out.println("Power gone! Shut down your PC soon...");
     }
- 
 }
  
