@@ -35,6 +35,11 @@ public class HelloWorld {
         void printf(String format, Object... args);
     }
 
+    public interface Flint extends Library {
+        Flint INSTANCE = (Flint)
+            Native.loadLibrary("libflint", Flint.class);
+    }
+
     public static void main(String[] args) {
 
         // Using some of my own classes; in packages and not in packages.
