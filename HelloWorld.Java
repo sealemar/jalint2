@@ -19,6 +19,12 @@
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import com.sun.jna.Memory;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.NativeLongByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 import java.io.FileInputStream;
 import java.util.Properties;
@@ -37,7 +43,11 @@ public class HelloWorld {
 
     public interface Flint extends Library {
         Flint INSTANCE = (Flint)
-            Native.loadLibrary("libflint", Flint.class);
+            Native.loadLibrary("flint", Flint.class);
+        // Optional: synchronizeLibrary wraps each entry point in a
+        // synch block, limiting thread entries to one at a time.
+
+        // NativeLibrary.getInstance(String)
     }
 
     public static void main(String[] args) {
