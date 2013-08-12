@@ -52,6 +52,9 @@ CLASSES = \
 run: classes
 	java -cp $(CP) HelloWorld foo bar baz qux
 
+debug: classes
+	jdb -classpath $(CP) HelloWorld foo bar baz qux
+
 default: run
 
 

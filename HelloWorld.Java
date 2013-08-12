@@ -20,6 +20,9 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
+import java.io.FileInputStream;
+import java.util.Properties;
+
 import computer_package.Computer;
 
 public class HelloWorld {
@@ -33,19 +36,25 @@ public class HelloWorld {
     }
 
     public static void main(String[] args) {
+
+        // Using some of my own classes; in packages and not in packages.
         Computer computer = new Computer();
         SameDir  samedir  = new SameDir();
         System.out.println("Hello, World");
 
+        // Using Princeton's utility classes.
         System.out.println("Type a string: ");
         String s = StdIn.readString();
         System.out.println("Your string was: " + s);
         System.out.println();
 
+        // Basic use without any property setting.
         CLibrary.INSTANCE.printf("Hello, World from the C runtime!\n");
         for (int i=0;i < args.length;i++) {
             CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
         }
 
+        Properties lib_path = System.getProperties();
+        lib_path.list(System.out);
     }
 }
