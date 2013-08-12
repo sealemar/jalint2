@@ -53,6 +53,8 @@ public class HelloWorld {
         for (int i=0;i < args.length;i++) {
             CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
         }
+        
+        System.setProperty("jna.library.path", "../flint2");
 
         Properties lib_path = System.getProperties();
         lib_path.list(System.out);
