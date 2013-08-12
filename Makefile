@@ -50,7 +50,7 @@ CLASSES = \
 #
 
 run: classes
-	java -cp $(CP) HelloWorld
+	java -cp $(CP) HelloWorld foo bar baz qux
 
 default: run
 

@@ -17,9 +17,20 @@
  *************************************************************************/
 
 import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
+
 import computer_package.Computer;
 
 public class HelloWorld {
+
+    public interface CLibrary extends Library {
+        CLibrary INSTANCE = (CLibrary)
+            Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"),
+                               CLibrary.class);
+
+        void printf(String format, Object... args);
+    }
 
     public static void main(String[] args) {
         Computer computer = new Computer();
@@ -30,6 +41,11 @@ public class HelloWorld {
         String s = StdIn.readString();
         System.out.println("Your string was: " + s);
         System.out.println();
-    }
 
+        CLibrary.INSTANCE.printf("Hello, World from the C runtime!\n");
+        for (int i=0;i < args.length;i++) {
+            CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
+        }
+
+    }
 }
