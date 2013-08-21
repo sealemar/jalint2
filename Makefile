@@ -1,11 +1,76 @@
+# make           - does compile and jar
+# make all       - compile and build everything
+# make build     - synonym to make jar
+# make clean     - clean
+# make compile   - compile *.java -> *.class
+# make debug     - executes main class in jdb. Run 'make build' first
+# make jar       - builds project.jar
+# make help      - this help
+# make run       - executes main class. Run 'make build' first
+# make test-repl - runs 'lein repl' with project.jar injected and runs etc/lein-repl.test in it. Run 'make all' first
 #
-# define compiler and compiler flag variables
 #
+# mkdir -p build/classes
+#
+# javac -sourcepath src -classpath lib/jna-4.0.0.jar:lib/stdlib-package.jar -d build/classes src/com/rebsea/jalint/HelloWorld.java
+# java -cp build/classes:lib/stdlib-package.jar:lib/jna-4.0.0.jar com.rebsea.jalint.HelloWorld
+#
+# jar cfm project.jar MANIFEST.MF -C bin .
+#
+# java -jar project.jar
+#
+# CLASSPATH=project.jar lein repl < lein-repl.test
+#
+# MANIFEST.MF
+#
+# Main-Class: com.rebsea.jalint.HelloWorld
+# Class-Path: lib/jna-4.0.0.jar lib/stdlib-package.jar
+# Created-By: reb-cabin & sealemar in the name of goodness
+#
+# lein-repl.test
+#
+# (import [com.rebsea.jalint HelloWorld])
+# (import [com.rebsea.jalint HelloWorld$Flint])
+# (HelloWorld$Flint/INSTANCE)
+# (.flint_malloc HelloWorld$Flint/INSTANCE 32)
+#
+# following http://stackoverflow.com/questions/1953048/java-project-structure-explained-for-newbies
+# default J2SE folder structure
 
-CP     = "./:./com/sun/jna/*:./stdlib/*"
-JFLAGS = -g -cp $(CP)
-JC     = javac
 
+RM := rm -fr
+
+BUILDTYPE = "debug"
+BINDIR    = "bin"
+SRCDIR    = "src"
+LIBDIR    = "lib"
+ETCDIR    = "etc"
+PROJECT_JAR_NAME = project.jar
+MANIFEST  = $(ETCDIR)/MANIFEST.MF
+LEIN_REPL_TEST_FILE = $(ETCDIR)/lein-repl.test
+
+JC_DEBUGOPT  = -g:none
+JAVA_FLAGS = -cp $(LIBS)
+ifeq ($(BUILDTYPE), "debug")
+    JC_DEBUGOPT = -g
+    JAVA_FLAGS  = -cp $(classpath) -ea -esa -Xfuture
+endif
+
+JFLAGS    = $(JC_DEBUGOPT) -classpath $(classpath) -sourcepath $(SRCDIR) -d $(BINDIR)
+JC        = javac
+MAINCLASS = com.rebsea.jalint.HelloWorld
+
+MAKE_BUILD_WARNING = echo "Something is wrong, try 'make compile' first"
+MAKE_ALL_WARNING   = echo "Something is wrong, try 'make all' first"
+
+# $(call make-classpath)
+make-classpath =      \
+    $(patsubst %:,%,  \
+        $(shell find $(LIBDIR) -name "*.jar" -type f -exec echo -n '{}': \;))
+
+classpath = $(call make-classpath)
+
+CP = $(BINDIR):$(classpath)
 
 # See - http://www.gnu.org/software/make/manual/make.html#Makefile-Basics
 #
@@ -21,78 +86,74 @@ JC     = javac
 # special dispensation, this eliminates all existing prerequisites of
 # .SUFFIXES. You can then write another rule to add the suffixes you want.
 #
-#
 # Delete the default suffixes
 .SUFFIXES:
 .SUFFIXES: .java .class
 
-
-#
-# Here is our target entry for creating .class files from .java files.
-# Remember that there must be a < tab > before the command line ('rule')
-#
-# http://www.gnu.org/software/make/manual/make.html#Pattern-Intro
-# http://www.gnu.org/software/make/manual/make.html#Pattern-Match
-#
-# don't use Old-Fashioned suffixes rules because
-#
-# http://www.gnu.org/software/make/manual/make.html#Suffix-Rules
-# http://www.gnu.org/software/make/manual/make.html#Automatic-Variables
-
-%.class : %.java
-	$(JC) $(JFLAGS) $<
-
-
-#
-# CLASSES is a macro consisting of one \-terminated line for each java
-# source file)
-#
-
-CLASSES = \
-	HelloWorld.java                  \
-	SameDir.java                     \
-	computer_package/Computer.java   \
-	UseArgument.java
-
-
-#
-# the default make target entry
-#
-
-run: classes
-	java -cp $(CP) HelloWorld foo bar baz qux
-
-debug: classes
-	jdb -classpath $(CP) HelloWorld foo bar baz qux
-
-default: run
-
-
-#
-# This target entry uses Suffix Replacement within a macro:
-# $(name:string1=string2)
-# 	In the words in the macro named 'name', replace 'string1' with 'string2'
-# Below we are replacing the suffix .java of all words in the macro CLASSES
-# with the .class suffix
-#
-
-classes: $(CLASSES:.java=.class)
-
-
-
-# From - http://www.gnu.org/software/make/manual/make.html#Phony-Targets
 #
 # A phony target is one that is not really the name of a file; rather it is
 # just a name for a recipe to be executed when you make an explicit request.
 # There are two reasons to use a phony target: to avoid a conflict with a file
 # of the same name, and to improve performance.
+#
+
+#
+# this should be the first recipe
+# make, if started with no arguments, runs the first recipe from Makefile
+#
+.PHONY: default
+default: compile jar
+
+.PHONY: help
+help:
+	@$(call brief-help, $(CURDIR)/Makefile)
+
+#
+# generate all_javas file by making a list of *.java filenames found
+# under $(SRCDIR)
+#
+all_javas := all.javas
+
+# make all_javas INTERMEDIATE - auto remove when done
+.INTERMEDIATE: $(all_javas)
+$(all_javas):
+	find $(SRCDIR) -type f -name "*.java" > $@
+
+# $(call brief-help, makefile)
+define brief-help
+    head -n 10 Makefile | sed 's/# //'
+endef
+
+#
+# use all_javas as an input file where all targets are listed
+#
+.PHONY: compile
+compile: $(all_javas)
+	@mkdir -p $(BINDIR)
+	$(JC) $(JFLAGS) @$<
+
+.PHONY: build
+build: jar
+
+.PHONY: run
+run:
+	java -cp $(CP) $(MAINCLASS) foo bar baz qux || $(MAKE_BUILD_WARNING)
+
+.PHONY: debug
+debug:
+	jdb -classpath $(CP) $(MAINCLASS) foo bar baz qux || $(MAKE_BUILD_WARNING)
+
+.PHONY: jar
+jar: compile
+	jar cfm $(PROJECT_JAR_NAME) $(MANIFEST) -C $(BINDIR) . || $(MAKE_BUILD_WARNING)
+
+.PHONY: all
+all: compile jar
+
+.PHONY: test-repl
+test-repl:
+	CLASSPATH=$(PROJECT_JAR_NAME) lein repl < $(LEIN_REPL_TEST_FILE) || $(MAKE_ALL_WARNING)
 
 .PHONY: clean
-
-#
-# RM is a predefined macro in make (RM = rm -f)
-# @ in front of a command makes it silent
-#
 clean:
-	@$(RM) *.class
-
+	@$(RM) $(BINDIR) $(PROJECT_JAR_NAME)

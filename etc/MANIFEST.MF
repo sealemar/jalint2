@@ -1,0 +1,3 @@
+Main-Class: com.rebsea.jalint.HelloWorld
+Class-Path: lib/jna-4.0.0.jar lib/stdlib-package.jar
+Created-By: reb-cabin & sealemar in the name of goodness

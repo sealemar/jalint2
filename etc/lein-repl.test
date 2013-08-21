@@ -1,0 +1,4 @@
+(import [com.rebsea.jalint HelloWorld])
+(import [com.rebsea.jalint HelloWorld$Flint])
+(HelloWorld$Flint/INSTANCE)
+(.flint_malloc HelloWorld$Flint/INSTANCE 32)
