@@ -32,6 +32,8 @@ import com.sun.jna.ptr.PointerByReference;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import com.rebsea.jalint.LibFlint;
+
 import com.rebsea.jalint.misc.Computer;
 import com.rebsea.jalint.misc.SameDir;
 
@@ -45,14 +47,24 @@ public class HelloWorld {
         void printf(String format, Object... args);
     }
 
-    public interface Flint extends Library {
-        Flint INSTANCE = (Flint)
-            Native.loadLibrary("flint", Flint.class);
-        // Optional: synchronizeLibrary wraps each entry point in a
-        // synch block, limiting thread entries to one at a time.
+    public static String libFlintSimpleExample() {
+        Memory x = LibFlint.create_fmpz_t();
+        Memory y = LibFlint.create_fmpz_t();
 
-        // NativeLibrary.getInstance(String)
-        int flint_malloc(int sz);
+        try {
+            LibFlint.fmpz_init(x);
+            LibFlint.fmpz_init(y);
+            LibFlint.fmpz_set_ui(x, 7);
+            LibFlint.fmpz_mul(y, x, x);
+
+            final String strX = LibFlint.fmpz_get_str(10, x);
+            final String strY = LibFlint.fmpz_get_str(10, y);
+
+            return (strX + "^2 = " + strY);
+        } finally {
+            LibFlint.fmpz_clear(x);
+            LibFlint.fmpz_clear(y);
+        }
     }
 
     public static void main(String[] args) {
@@ -80,7 +92,16 @@ public class HelloWorld {
         lib_path.list(System.out);
 
 
-        int t = Flint.INSTANCE.flint_malloc(42);
-        System.out.println("Flint.INSTANCE.flint_malloc(42) = " + t);
+        Pointer t = LibFlint.flint_malloc(42);
+        System.out.println("LibFlint.flint_malloc(42).getLong(0) = " + t.getLong(0));
+        LibFlint.flint_free(t);
+        System.out.println("Pointer after flint_free = " + t.getLong(0));
+
+        System.out.println();
+        System.out.println("---------------------------------------");
+        System.out.println("  and here is libflint simple example");
+        System.out.println();
+
+        System.out.println(libFlintSimpleExample());
     }
 }

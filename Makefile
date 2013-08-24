@@ -41,7 +41,7 @@
 RM := rm -fr
 
 BUILDTYPE = "debug"
-BINDIR    = "bin"
+BUILDDIR  = "build"
 SRCDIR    = "src"
 LIBDIR    = "lib"
 ETCDIR    = "etc"
@@ -56,7 +56,7 @@ ifeq ($(BUILDTYPE), "debug")
     JAVA_FLAGS  = -cp $(classpath) -ea -esa -Xfuture
 endif
 
-JFLAGS    = $(JC_DEBUGOPT) -classpath $(classpath) -sourcepath $(SRCDIR) -d $(BINDIR)
+JFLAGS    = $(JC_DEBUGOPT) -classpath $(classpath) -sourcepath $(SRCDIR) -d $(BUILDDIR)
 JC        = javac
 MAINCLASS = com.rebsea.jalint.HelloWorld
 
@@ -70,7 +70,7 @@ make-classpath =      \
 
 classpath = $(call make-classpath)
 
-CP = $(BINDIR):$(classpath)
+CP = $(BUILDDIR):$(classpath)
 
 # See - http://www.gnu.org/software/make/manual/make.html#Makefile-Basics
 #
@@ -101,8 +101,8 @@ CP = $(BINDIR):$(classpath)
 # this should be the first recipe
 # make, if started with no arguments, runs the first recipe from Makefile
 #
-.PHONY: default
-default: compile jar
+.PHONY: all
+all: compile jar
 
 .PHONY: help
 help:
@@ -129,7 +129,7 @@ endef
 #
 .PHONY: compile
 compile: $(all_javas)
-	@mkdir -p $(BINDIR)
+	@mkdir -p $(BUILDDIR)
 	$(JC) $(JFLAGS) @$<
 
 .PHONY: build
@@ -145,10 +145,7 @@ debug:
 
 .PHONY: jar
 jar: compile
-	jar cfm $(PROJECT_JAR_NAME) $(MANIFEST) -C $(BINDIR) . || $(MAKE_BUILD_WARNING)
-
-.PHONY: all
-all: compile jar
+	jar cfm $(PROJECT_JAR_NAME) $(MANIFEST) -C $(BUILDDIR) . || $(MAKE_BUILD_WARNING)
 
 .PHONY: test-repl
 test-repl:
@@ -156,4 +153,4 @@ test-repl:
 
 .PHONY: clean
 clean:
-	@$(RM) $(BINDIR) $(PROJECT_JAR_NAME)
+	@$(RM) $(BUILDDIR) $(PROJECT_JAR_NAME)

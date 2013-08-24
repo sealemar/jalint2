@@ -1,4 +1,4 @@
 (import [com.rebsea.jalint HelloWorld])
-(import [com.rebsea.jalint HelloWorld$Flint])
-(HelloWorld$Flint/INSTANCE)
-(.flint_malloc HelloWorld$Flint/INSTANCE 32)
+(import [com.rebsea.jalint FlintLib])
+(.getLong (FlintLib/flint_malloc 32) 0)
+(HelloWorld/libFlintSimpleExample)
