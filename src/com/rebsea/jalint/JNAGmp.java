@@ -14,7 +14,7 @@ import com.sun.jna.Pointer;
 /**
  * @brief from <gmp.h>
  */
-public class LibGmp {
+public class JNAGmp {
     static {
         Native.register("gmp");
     }

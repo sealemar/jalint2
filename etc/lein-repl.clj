@@ -1,0 +1,5 @@
+(import [com.rebsea.jalint HelloWorld])
+(import [com.rebsea.jalint JNAFlint])
+(.getLong (JNAFlint/flint_malloc 32) 0)
+(HelloWorld/jnaFlintSimpleExample HelloWorld/SIMPLE_EXAMPLE_VAR)
+(HelloWorld/jniFlintSimpleExample HelloWorld/SIMPLE_EXAMPLE_VAR)

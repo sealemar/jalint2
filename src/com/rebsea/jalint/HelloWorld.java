@@ -32,12 +32,15 @@ import com.sun.jna.ptr.PointerByReference;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import com.rebsea.jalint.LibFlint;
+import com.rebsea.jalint.JNAFlint;
+import com.rebsea.jalint.jni.Jalint;
 
 import com.rebsea.jalint.misc.Computer;
 import com.rebsea.jalint.misc.SameDir;
 
 public class HelloWorld {
+
+    public static final long SIMPLE_EXAMPLE_VAR = 7;
 
     public interface CLibrary extends Library {
         CLibrary INSTANCE = (CLibrary)
@@ -47,24 +50,50 @@ public class HelloWorld {
         void printf(String format, Object... args);
     }
 
-    public static String libFlintSimpleExample() {
-        Memory x = LibFlint.create_fmpz_t();
-        Memory y = LibFlint.create_fmpz_t();
+    public static String jnaFlintSimpleExample(final long var) {
+        Memory x = JNAFlint.create_fmpz_t();
+        Memory y = JNAFlint.create_fmpz_t();
 
         try {
-            LibFlint.fmpz_init(x);
-            LibFlint.fmpz_init(y);
-            LibFlint.fmpz_set_ui(x, 7);
-            LibFlint.fmpz_mul(y, x, x);
+            JNAFlint.fmpz_init(x);
+            JNAFlint.fmpz_init(y);
+            JNAFlint.fmpz_set_ui(x, var);
+            JNAFlint.fmpz_mul(y, x, x);
 
-            final String strX = LibFlint.fmpz_get_str(10, x);
-            final String strY = LibFlint.fmpz_get_str(10, y);
+            final String strX = JNAFlint.fmpz_get_str(10, x);
+            final String strY = JNAFlint.fmpz_get_str(10, y);
 
             return (strX + "^2 = " + strY);
         } finally {
-            LibFlint.fmpz_clear(x);
-            LibFlint.fmpz_clear(y);
+            JNAFlint.fmpz_clear(x);
+            JNAFlint.fmpz_clear(y);
         }
+    }
+
+    public static String jniFlintSimpleExample(final long x) {
+        return (x + "^2 = " + Jalint.simpleExample_flintPow2(x));
+    }
+
+    public static long stressTestJNA(final long iterations) {
+        long timeMillis = System.currentTimeMillis();
+
+        for(long i = 0; i < iterations; ++i) {
+            jnaFlintSimpleExample(SIMPLE_EXAMPLE_VAR);
+        }
+
+        timeMillis = System.currentTimeMillis() - timeMillis;
+        return timeMillis;
+    }
+
+    public static long stressTestJNI(final long iterations) {
+        long timeMillis = System.currentTimeMillis();
+
+        for(long i = 0; i < iterations; ++i) {
+            jniFlintSimpleExample(SIMPLE_EXAMPLE_VAR);
+        }
+
+        timeMillis = System.currentTimeMillis() - timeMillis;
+        return timeMillis;
     }
 
     public static void main(String[] args) {
@@ -92,16 +121,35 @@ public class HelloWorld {
         lib_path.list(System.out);
 
 
-        Pointer t = LibFlint.flint_malloc(42);
-        System.out.println("LibFlint.flint_malloc(42).getLong(0) = " + t.getLong(0));
-        LibFlint.flint_free(t);
+        Pointer t = JNAFlint.flint_malloc(42);
+        System.out.println("JNAFlint.flint_malloc(42).getLong(0) = " + t.getLong(0));
+        JNAFlint.flint_free(t);
         System.out.println("Pointer after flint_free = " + t.getLong(0));
 
         System.out.println();
         System.out.println("---------------------------------------");
         System.out.println("  and here is libflint simple example");
         System.out.println();
+        System.out.println("JNA call");
 
-        System.out.println(libFlintSimpleExample());
+        System.out.println(jnaFlintSimpleExample(SIMPLE_EXAMPLE_VAR));
+
+        System.out.println();
+        System.out.println("JNI call");
+        System.out.println(jniFlintSimpleExample(SIMPLE_EXAMPLE_VAR));
+
+        //
+        // ------ stress tests -------
+        //
+
+        final long iters = 100000;
+
+        System.out.println();
+        System.out.println("stress testing JNA call with " + iters + " iterations");
+        System.out.println("it took " + stressTestJNA(iters) + " milliseconds");
+
+        System.out.println();
+        System.out.println("stress testing JNI call with " + iters + " iterations");
+        System.out.println("it took " + stressTestJNI(iters) + " milliseconds");
     }
 }

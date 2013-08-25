@@ -36,7 +36,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 
-import com.rebsea.jalint.LibGmp;
+import com.rebsea.jalint.JNAGmp;
 
 //
 // All native converstions are done based on
@@ -46,7 +46,7 @@ import com.rebsea.jalint.LibGmp;
 //     A Pointer to memory obtained from the native heap via a call to malloc.
 //     The finalize() method will free allocated memory when this object is no longer referenced.
 //
-public class LibFlint {
+public class JNAFlint {
     static {
         Native.register("flint");
     }
@@ -200,7 +200,7 @@ public class LibFlint {
     public static void fmpz_set_ui(Pointer f, long val) {
         if(val > COEFF_MAX) {             // val is large
             Pointer mpz_coeff = _fmpz_promote(f);
-            LibGmp.mpz_set_ui(mpz_coeff, val);
+            JNAGmp.mpz_set_ui(mpz_coeff, val);
         } else {                          // val is small
             _fmpz_demote(f);
             f.setNativeLong(0, new NativeLong(val));
