@@ -9,6 +9,7 @@
 # make help      - this help
 # make run       - executes main class. Run 'make build' first
 # make test-repl - runs 'lein repl' with project.jar injected and runs etc/lein-repl.clj in it. Run 'make all' first
+# make ctags     - rebuild ctags in etc/java.ctags, etc/c.ctags
 #
 #
 # mkdir -p build/classes
@@ -41,7 +42,7 @@
 
 RM := rm -fr
 
-HEADER_HELP_LINES := 11
+HEADER_HELP_LINES := 12
 
 #DEBUG     := 1
 BUILDDIR  := build
@@ -65,9 +66,10 @@ ETCDIR    := etc
 all: compile jar
 
 include jni.mk
+include ctags.mk
 
 JAVA_BUILDDIR  := $(BUILDDIR)/java
-PROJECT_JAR_NAME := project.jar
+PROJECT_JAR_NAME := jalint.jar
 MANIFEST  := $(ETCDIR)/MANIFEST.MF
 LEIN_REPL_TEST_FILE := $(ETCDIR)/lein-repl.clj
 
