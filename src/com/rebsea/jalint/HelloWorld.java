@@ -22,14 +22,9 @@ import edu.princeton.cs.introcs.StdIn;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Memory;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.NativeLongByReference;
-import com.sun.jna.ptr.PointerByReference;
 
-import java.io.FileInputStream;
 import java.util.Properties;
 
 import com.rebsea.jalint.JNAFlint;
@@ -99,8 +94,6 @@ public class HelloWorld {
     public static void main(String[] args) {
 
         // Using some of my own classes; in packages and not in packages.
-        Computer computer = new Computer();
-        SameDir  samedir  = new SameDir();
         System.out.println("Hello, World");
 
         // Using Princeton's utility classes.
