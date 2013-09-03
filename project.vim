@@ -5,10 +5,11 @@
 "
 " Per language setup
 "
-function! s:initC()
+function! s:initC(ctagsFile, srcDir)
     setlocal notagrelative
     setlocal tags+=$HOME/.cache/vim-specific/tags/c-home-include
-    setlocal tags+=etc/c.ctags
+    execute "setlocal path+=" . a:srcDir
+    execute "setlocal tags+=" . a:ctagsFile
 endfunction
 
 function! s:initJava()
@@ -16,14 +17,16 @@ function! s:initJava()
     setlocal tags+=etc/java.ctags
 endfunction
 
-autocmd FileType c call <SID>initC()
-autocmd FileType java call <SID>initJava()
+autocmd BufEnter jni/*.[ch] call <SID>initC('etc/c.jni.ctags', 'jni/libjalint')
+autocmd BufEnter test/c/*.[ch] call <SID>initC('etc/c.test.ctags', 'test/c')
+autocmd BufEnter src/*.java call <SID>initJava()
 
 "
 " Ctags files rebuild
 "
-autocmd BufWritePost c silent !make ctags-c
-autocmd BufWritePost java silent !make ctags-java
+autocmd BufWritePost jni/*.[ch] silent !make ctags-c-jni
+autocmd BufWritePost test/c/*.[ch] silent !make ctags-c-test
+autocmd BufWritePost src/*.java silent !make ctags-java
 
 "
 " Session managemenr

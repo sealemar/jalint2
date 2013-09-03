@@ -16,7 +16,7 @@ ifdef DEBUG
     CC_FLAGS := -g -O0
 endif
 
-CC_FLAGS     += $(CC_DEBUG) -Weverything -shared -std=c99 -x c
+CC_FLAGS     += $(CC_DEBUG) -Wall -Wextra -Werror -Wc99-compat -std=c99 -x c
 
 # TODO: *.dylib -> system dependent { *.dyld | *.so }
 # TODO: search for the JNI libraries automaticly
@@ -27,4 +27,4 @@ jni:
 	@echo Building JNI libs
 	@echo -----------------
 	@mkdir -p $(JNI_BUILDDIR)
-	$(CC) $(CC_FLAGS) $(C_INCLUDE) $(C_LIBS) -o $(JNI_BUILDDIR)/libjalint.dylib $(JNI_SRCDIR)/libjalint/libjalint.c
+	$(CC) $(CC_FLAGS) $(C_INCLUDE) $(C_LIBS) -shared -o $(JNI_BUILDDIR)/libjalint.dylib $(JNI_SRCDIR)/libjalint/libjalint.c

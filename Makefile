@@ -1,16 +1,22 @@
-# make           - does compile and jar
-# make all       - compile and build everything
-# make build     - synonym to make jar
-# make clean     - clean
-# make compile   - compile *.java -> *.class
-# make debug     - executes main class in jdb. Run 'make build' first
-# make jar       - builds project.jar
-# make jni       - builds native library for JNI calls
-# make help      - this help
-# make run       - executes main class. Run 'make build' first
-# make test-repl - runs 'lein repl' with project.jar injected and runs etc/lein-repl.clj in it. Run 'make all' first
-# make ctags     - rebuild ctags in etc/java.ctags, etc/c.ctags
+# make             - does compile and jar
+# make all         - does 'make compile' && 'make jar'
+# make build       - synonym to make jar
+# make clean       - clean
+# make compile     - compile *.java -> *.class. Also does 'make jni'
+# make debug       - executes main class in jdb. Run 'make build' first
+# make jar         - builds project.jar
+# make jni         - builds native library for JNI calls
+# make help        - this help
+# make run         - executes main class. Run 'make build' first
+# make test-repl   - runs 'lein repl' with project.jar injected and runs etc/lein-repl.clj in it. Run 'make all' first
+# make ctags       - rebuild ctags in etc/java.ctags, etc/c.ctags
+# make clean-ctags - removes all ctags files
+# make c-test      - make tests to test C libraries
 #
+#
+#
+# MAKING JAVA
+# -----------
 #
 # mkdir -p build/classes
 #
@@ -42,13 +48,14 @@
 
 RM := rm -fr
 
-HEADER_HELP_LINES := 12
+HEADER_HELP_LINES := 14
 
 #DEBUG     := 1
 BUILDDIR  := build
 SRCDIR    := src
 LIBDIR    := lib
 ETCDIR    := etc
+TESTDIR   := test
 
 
 #
@@ -66,6 +73,7 @@ ETCDIR    := etc
 all: compile jar
 
 include jni.mk
+include test-c.mk
 include ctags.mk
 
 JAVA_BUILDDIR  := $(BUILDDIR)/java
@@ -170,4 +178,4 @@ test-repl:
 
 .PHONY: clean
 clean:
-	@$(RM) $(BUILDDIR) $(PROJECT_JAR_NAME)
+	$(RM) "$(BUILDDIR)" "$(PROJECT_JAR_NAME)"
