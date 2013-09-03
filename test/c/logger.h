@@ -16,8 +16,11 @@ extern FILE *outStream;
 #define STANDARD_PREFIX         ""
 #define ERROR_CONTINUE_PREFIX   " ----> "
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x)  STRINGIFY(x)
+
 #define _LOG(stream, prefix, format, ...) \
-    { fprintf(stream, "%s"##format##"\n", prefix##__FILE__##":"##__LINE__##" ("##__func__##") - ", ##__VA_ARGS__); }
+    { fprintf(stream, "%s (%s) - " format "\n", prefix __FILE__ ":" TOSTRING(__LINE__), __func__, ##__VA_ARGS__); }
 
 #define LogError(format, ...) \
     { _LOG(ERR_STREAM, ERROR_PREFIX, format, ##__VA_ARGS__); }
@@ -41,26 +44,26 @@ extern FILE *outStream;
 // @param format, ... - custom formatted message
 //
 #define OriginateErrorEx(result, resultSpecifier, format, ...) \
-    { LogError("["##resultSpecifier##"]"##format, result, ##__VA_ARGS__); return result; }
+    { LogError("[" resultSpecifier "] " format, result, ##__VA_ARGS__); return result; }
 
 //
 // @see OriginateErrorEx
 //
 #define OriginateError(result, resultSpecifier) \
-    { LogError("["##resultSpecifier##"]", result); return result; }
+    { LogError("[" resultSpecifier "] ", result); return result; }
 
 //
 // @see OriginateErrorEx
 //
 #define ContinueErrorEx(result, resultSpecifier, format, ...) \
     { _LOG(ERR_STREAM, ERROR_CONTINUE_PREFIX, \
-           "["##resultSpecifier##"]"##format, result, ##__VA_ARGS__); return result; }
+           "[" resultSpecifier "] " format, result, ##__VA_ARGS__); return result; }
 
 //
 // @see OriginateErrorEx
 //
 #define ContinueError(result, resultSpecifier) \
     { _LOG(ERR_STREAM, ERROR_CONTINUE_PREFIX, \
-           "["##resultSpecifier##"]"##format, result); return result; }
+           "[" resultSpecifier "] ", result); return result; }
 
 #endif

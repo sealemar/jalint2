@@ -41,7 +41,6 @@ flags = [
 '-Wall',
 '-Wextra',
 '-Werror',
-'-Wc99-compat',
 '-DNDEBUG',
 '-DUSE_CLANG_COMPLETER',
 # THIS IS IMPORTANT! Without a "-std=<something>" flag, clang won't know which

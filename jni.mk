@@ -16,7 +16,7 @@ ifdef DEBUG
     CC_FLAGS := -g -O0
 endif
 
-CC_FLAGS     += $(CC_DEBUG) -Wall -Wextra -Werror -Wc99-compat -std=c99 -x c
+CC_FLAGS     += $(CC_DEBUG) -Wall -Wextra -Werror -std=c99 -x c
 
 # TODO: *.dylib -> system dependent { *.dyld | *.so }
 # TODO: search for the JNI libraries automaticly

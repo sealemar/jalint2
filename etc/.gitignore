@@ -1,4 +1,2 @@
-c.ctags
-java.ctags
-Session.vim
-Session.old.vim
+*.ctags
+Session*.vim
